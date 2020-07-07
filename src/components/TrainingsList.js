@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import moment from 'moment';
+import Button from '@material-ui/core/Button';
 
 export default function TrainingsList() {
 
@@ -19,6 +20,16 @@ export default function TrainingsList() {
     .catch(err => console.error(err))
   };
 
+  const deleteTraining = (link) => {
+    if(window.confirm("Delete this training from the database? This action is irreversible.")) {
+      fetch(link, {method : 'DELETE'})
+      .then(res => {
+        fetchData();
+      })
+      .catch(err => console.error(err))
+    }
+  };
+
   const columns = [
     {
       Header : 'Date',
@@ -32,6 +43,13 @@ export default function TrainingsList() {
     {
       Header : 'Activity',
       accessor : 'activity'
+    },
+    {
+      sortable : false,
+      filterable : false,
+      width : 100,
+      accessor : 'links.0.href',
+      Cell: row => <Button size="small" color="secondary" onClick={() => deleteTraining(row.value)}>Delete</Button>
     }
   ]
   return (
