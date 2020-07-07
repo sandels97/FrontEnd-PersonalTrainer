@@ -46,6 +46,8 @@ export default function TrainingsList() {
       accessor : 'activity'
     },
     {
+      sortable : false,
+      filterable : false,
       Header : 'Customer',
       accessor : 'links.2.href',
       Cell: row => <Link href={row.original.links[2].href} color="primary">Link to customer</Link>

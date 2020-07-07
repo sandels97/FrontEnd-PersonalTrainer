@@ -12,6 +12,7 @@ import Tab from '@material-ui/core/Tab';
 import { BrowserRouter, Switch, Route, Link } from 'react-router-dom';
 import CustomerPage from './CustomerPage';
 import TrainingsPage from './TrainingsPage';
+import CalendarPage from './CalendarPage';
 
 function App() {
   return (
@@ -31,11 +32,13 @@ function App() {
               fullWidth>
               <Tab label="Customers" component={Link} to="/"/>
               <Tab label="Trainings" component={Link} to="/trainings"/>
+              <Tab label="Calendar" component={Link} to="/calendar"/>
             </Tabs>
           </AppBar>
           <Switch>
                 <Route exact path="/" component={CustomerPage}/>
                 <Route exact path="/trainings" component={TrainingsPage}/>
+                <Route exact path="/calendar" component={CalendarPage}/>
                 <Route render={()  => <h1>Page not found</h1>} />
           </Switch>
         </div>
