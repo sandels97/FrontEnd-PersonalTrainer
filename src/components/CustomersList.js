@@ -6,8 +6,13 @@ import Button from '@material-ui/core/Button';
 import AddCustomer from './AddCustomer';
 import EditCustomer from './EditCustomer';
 
+import AddTraining from './AddTraining';
+
+import moment from 'moment';
+
 export default function CustomerList() {
 
+  const trainings_api = 	"https://customerrest.herokuapp.com/api/trainings";
   const customer_api = 	"https://customerrest.herokuapp.com/api/customers";
   const [customers, setCustomers] = useState([]);
 
@@ -48,6 +53,23 @@ export default function CustomerList() {
     .catch(err => console.error(err))
   }
 
+  const saveTraining = (training) => {
+
+    training.date = moment(training.date);
+    console.log(training.date);
+    fetch(trainings_api, 
+      {
+        method : 'POST',
+        headers: {
+          'Content-Type' : 'application/json'
+        },
+        body : JSON.stringify(training)
+      }      
+
+    )
+    .then(res => fetchData())
+    .catch(err => console.error(err))
+  }
   const updateCustomer = (customer, link) => {
     fetch(link, 
       {
@@ -91,6 +113,12 @@ export default function CustomerList() {
     {
       Header : 'Phone',
       accessor : 'phone'
+    },
+    {
+      sortable : false,
+      filterable : false,
+      width : 200,
+      Cell: row => <AddTraining saveTraining={saveTraining} customer_link={row.original.links[0].href} />
     }, 
     {
       sortable : false,

@@ -3,6 +3,7 @@ import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import moment from 'moment';
 import Button from '@material-ui/core/Button';
+import Link from '@material-ui/core/Link';
 
 export default function TrainingsList() {
 
@@ -43,6 +44,11 @@ export default function TrainingsList() {
     {
       Header : 'Activity',
       accessor : 'activity'
+    },
+    {
+      Header : 'Customer',
+      accessor : 'links.2.href',
+      Cell: row => <Link href={row.original.links[2].href} color="primary">Link to customer</Link>
     },
     {
       sortable : false,
