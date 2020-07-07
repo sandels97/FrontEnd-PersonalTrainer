@@ -17,44 +17,47 @@ import moment from 'moment';
 export default function Calendar(props) {
 
     const trainings_api = 	"https://customerrest.herokuapp.com/api/trainings";
-    const [trainings, setTrainings] = useState([]);
-
+  
     const [schedulerData, setSchedulerData] = useState([]);
+
+    useEffect(() => {
+      fetchData();
+    }, []);
+  
+    const fetchData = () => {
+      fetch(trainings_api)
+      .then(response => response.json())
+      .then(data => {
+        fetchCustomers(data.content);
+      })
+      .catch(err => console.error(err))
+    };
+  
+    const fetchCustomers = (trainings) => {
+    
+        //Generate appointments for scheduler
+        for(let i = 0; i< trainings.length; i++) {
+            let training = trainings[i];
+
+            fetch(training.links[2].href)
+            .then(response => response.json())
+            .then(data => {
+                training.customerName = data.firstname + " " + data.lastname;
+
+                let endDate = moment(training.date).add(training.duration, 'minutes')
+                let event = {startDate : training.date, endDate : endDate, title : training.activity + " / " + training.customerName}
+                setSchedulerData(array => [...array, event])
+            })
+            .catch(err => console.error(err))
+        }
+    };
+
 
     const currentDate = moment().format('YYYY-MM-DD');
     /*const schedulerData = [
     { startDate: '2018-11-01T09:45', endDate: '2018-11-01T11:00', title: 'Meeting' },
     { startDate: '2018-11-01T12:00', endDate: '2018-11-01T13:30', title: 'Go to a gym' },
     ];*/
-
-    useEffect(() => {
-        setSchedulerData([
-            { startDate: '2020-07-08T18:45', endDate: '2020-07-08T19:45', title: 'Meeting' },
-            { startDate: '2020-07-07T18:00', endDate: '2020-07-07T18:45', title: 'Go to a gym' },
-        ]);
-        fetchData();
-    }, []);
-    
-    const fetchData = () => {
-        fetch(trainings_api)
-        .then(response => response.json())
-        .then(data => {
-            setTrainings(data.content);
-            generateScheduleData(data.content);
-        })
-        .catch(err => console.error(err))
-    };
-
-    const generateScheduleData = (trainings) => {
-        let data = []
-        for (let i = 0; i < trainings.length; i ++) {
-            let training = trainings[i];
-            let endDate = moment(training.date).add(training.duration, 'minutes')
-            data[i] = {startDate : training.date, endDate : endDate, title : training.activity}
-        }
-
-        setSchedulerData(data);
-    }
 
     return (
         <div>

@@ -17,14 +17,32 @@ export default function TrainingsList() {
   const fetchData = () => {
     fetch(trainings_api)
     .then(response => response.json())
-    .then(data => setTrainings(data.content))
+    .then(data => {
+      fetchCustomers(data.content);
+    })
     .catch(err => console.error(err))
   };
+
+  const fetchCustomers = (trainings) => {
+    for(let i = 0; i < trainings.length; i++) {
+      let training = trainings[i];
+      fetch(training.links[2].href)
+      .then(response => response.json())
+      .then(data => {
+        training.customerName = data.firstname + " " + data.lastname;
+
+        setTrainings(array => [...array, training])
+      })
+      .catch(err => console.error(err))
+    }
+  };
+
 
   const deleteTraining = (link) => {
     if(window.confirm("Delete this training from the database? This action is irreversible.")) {
       fetch(link, {method : 'DELETE'})
       .then(res => {
+        setTrainings([]);
         fetchData();
       })
       .catch(err => console.error(err))
@@ -46,11 +64,8 @@ export default function TrainingsList() {
       accessor : 'activity'
     },
     {
-      sortable : false,
-      filterable : false,
       Header : 'Customer',
-      accessor : 'links.2.href',
-      Cell: row => <Link href={row.original.links[2].href} color="primary">Link to customer</Link>
+      accessor : 'customerName'
     },
     {
       sortable : false,
